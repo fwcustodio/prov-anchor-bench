@@ -1,0 +1,15 @@
+# Node
+node_modules/
+
+# Rust
+contracts/anchor/target/
+
+# Disposable pilot keys and secrets — never committed
+harness/.pilot-secrets.json
+harness/.rekor-key.pem
+
+# Generated pipeline artifacts (reproducible from data + code)
+harness/artifacts/
+
+# Raw input data (downloaded; see harness/data/README.md)
+harness/data/*.csv
