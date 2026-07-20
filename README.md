@@ -20,8 +20,8 @@ Each artifact is described by a minimal W3C PROV-DM record; the anchor stores th
 ## Repository layout
 
 ```
-contracts/anchor/   Minimal Soroban anchoring contract (Rust, soroban-sdk)
-harness/            Measurement harness (TypeScript, Node 20+)
+contracts/anchor/   Minimal Soroban anchoring contract (Rust, soroban-sdk — contracts are Rust by platform requirement)
+harness/            Measurement harness (Python 3.11+, stellar-sdk)
 analysis/           Descriptive analysis of pilot runs (Python)
 docs/               Pre-registered protocol and results
 ```
@@ -32,16 +32,21 @@ docs/               Pre-registered protocol and results
 # 1. Build and deploy the contract (requires Rust + stellar-cli, testnet account via friendbot)
 cd contracts/anchor && stellar contract build
 
-# 2. Install the harness
-cd harness && npm install
+# 2. Install the harness dependencies (from the repository root)
+pip install -r harness/requirements.txt
 
-# 3. Run a smoke test (10 operations per mechanism)
-npm run smoke
+# 3. Run a smoke test (3 operations per mechanism)
+python -m harness.run_pilot --smoke
 
-# 4. Run the pilot (windows, balanced randomized order, CSV output)
-npm run pilot
+# 4. Run a pilot window (balanced randomized order, CSV output)
+python -m harness.run_pilot --window 1
+python -m harness.baseline_probe --minutes 10   # in parallel, separate terminal
 
-# 5. Analyze
+# 5. Verify the provenance chain and time the local primitive
+python -m harness.verify_chain
+python -m harness.local_primitive
+
+# 6. Analyze
 python analysis/pilot_analysis.py
 ```
 
