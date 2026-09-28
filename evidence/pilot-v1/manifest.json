@@ -1,0 +1,14 @@
+{
+  "contractId": "CB6CW2PRULKUBZWJPONROCSV7L6TXQEIVR4N2SZURQX56XHYA5I6LCGM",
+  "contractWasmSha256": "ba4ca84ac354cb74248ec32d4057d45ddf9cfab85961de36ce21df47346abea5",
+  "label": "pilot-v1",
+  "opsCsv": "analysis/results/pilot-ops.csv",
+  "rekorEntries": 52,
+  "retrievedAtUtc": "2026-09-28T00:38:53+00:00",
+  "sources": {
+    "horizon": "https://horizon-testnet.stellar.org",
+    "rekor": "https://rekor.sigstore.dev",
+    "sorobanRpc": "https://soroban-testnet.stellar.org"
+  },
+  "stellarTransactions": 104
+}

@@ -1,0 +1,132 @@
+{
+  "operations": {
+    "_embedded": {
+      "records": [
+        {
+          "_links": {
+            "effects": {
+              "href": "https://horizon-testnet.stellar.org/operations/16820449140813825/effects"
+            },
+            "precedes": {
+              "href": "https://horizon-testnet.stellar.org/effects?order=asc&cursor=16820449140813825"
+            },
+            "self": {
+              "href": "https://horizon-testnet.stellar.org/operations/16820449140813825"
+            },
+            "succeeds": {
+              "href": "https://horizon-testnet.stellar.org/effects?order=desc&cursor=16820449140813825"
+            },
+            "transaction": {
+              "href": "https://horizon-testnet.stellar.org/transactions/871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7"
+            }
+          },
+          "created_at": "2026-08-01T16:18:35Z",
+          "id": "16820449140813825",
+          "name": "a00012-art",
+          "paging_token": "16820449140813825",
+          "source_account": "GD2D7FTVH6ZX7DBASJISKXGHBDX3B2FAZ66WXXGA33SR2KPR6Y37JWJJ",
+          "transaction_hash": "871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7",
+          "transaction_successful": true,
+          "type": "manage_data",
+          "type_i": 10,
+          "value": "wYDJ7EeuJLDydwVyabuL0WFdWwdPGabBMDgIZf/D6Ek="
+        },
+        {
+          "_links": {
+            "effects": {
+              "href": "https://horizon-testnet.stellar.org/operations/16820449140813826/effects"
+            },
+            "precedes": {
+              "href": "https://horizon-testnet.stellar.org/effects?order=asc&cursor=16820449140813826"
+            },
+            "self": {
+              "href": "https://horizon-testnet.stellar.org/operations/16820449140813826"
+            },
+            "succeeds": {
+              "href": "https://horizon-testnet.stellar.org/effects?order=desc&cursor=16820449140813826"
+            },
+            "transaction": {
+              "href": "https://horizon-testnet.stellar.org/transactions/871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7"
+            }
+          },
+          "created_at": "2026-08-01T16:18:35Z",
+          "id": "16820449140813826",
+          "name": "a00012-prv",
+          "paging_token": "16820449140813826",
+          "source_account": "GD2D7FTVH6ZX7DBASJISKXGHBDX3B2FAZ66WXXGA33SR2KPR6Y37JWJJ",
+          "transaction_hash": "871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7",
+          "transaction_successful": true,
+          "type": "manage_data",
+          "type_i": 10,
+          "value": "1V193BrFaXEumV67JOACGIb9sfMY1h0IBmSkM9oCPD0="
+        }
+      ]
+    },
+    "_links": {
+      "next": {
+        "href": "https://horizon-testnet.stellar.org/transactions/871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7/operations?cursor=16820449140813826&limit=20&order=asc"
+      },
+      "prev": {
+        "href": "https://horizon-testnet.stellar.org/transactions/871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7/operations?cursor=16820449140813825&limit=20&order=desc"
+      },
+      "self": {
+        "href": "https://horizon-testnet.stellar.org/transactions/871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7/operations?cursor=&limit=20&order=asc"
+      }
+    }
+  },
+  "transaction": {
+    "_links": {
+      "account": {
+        "href": "https://horizon-testnet.stellar.org/accounts/GD2D7FTVH6ZX7DBASJISKXGHBDX3B2FAZ66WXXGA33SR2KPR6Y37JWJJ"
+      },
+      "effects": {
+        "href": "https://horizon-testnet.stellar.org/transactions/871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7/effects{?cursor,limit,order}",
+        "templated": true
+      },
+      "ledger": {
+        "href": "https://horizon-testnet.stellar.org/ledgers/3916316"
+      },
+      "operations": {
+        "href": "https://horizon-testnet.stellar.org/transactions/871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7/operations{?cursor,limit,order}",
+        "templated": true
+      },
+      "precedes": {
+        "href": "https://horizon-testnet.stellar.org/transactions?order=asc&cursor=16820449140813824"
+      },
+      "self": {
+        "href": "https://horizon-testnet.stellar.org/transactions/871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7"
+      },
+      "succeeds": {
+        "href": "https://horizon-testnet.stellar.org/transactions?order=desc&cursor=16820449140813824"
+      },
+      "transaction": {
+        "href": "https://horizon-testnet.stellar.org/transactions/871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7"
+      }
+    },
+    "created_at": "2026-08-01T16:18:35Z",
+    "envelope_xdr": "AAAAAgAAAAD0P5Z1P7N/jCCSUSVcxwjvsOigz71r3MDe5R0p8fY39AAAAMgAOJpQAAAASQAAAAEAAAAAAAAAAAAAAABqbhySAAAAAAAAAAIAAAAAAAAACgAAAAphMDAwMTItYXJ0AAAAAAABAAAAIMGAyexHriSw8ncFcmm7i9FhXVsHTxmmwTA4CGX/w+hJAAAAAAAAAAoAAAAKYTAwMDEyLXBydgAAAAAAAQAAACDVXX3cGsVpcS6ZXrsk4AIYhv2x8xjWHQgGZKQz2gI8PQAAAAAAAAAB8fY39AAAAEAlVeXfRKT6gmxwSqMVWTJj24drEY8prEjdXYWmh6e3MG697qPpSRkQwqs47TG9crKtYdDLbtnmltdIVUfIw2wB",
+    "fee_account": "GD2D7FTVH6ZX7DBASJISKXGHBDX3B2FAZ66WXXGA33SR2KPR6Y37JWJJ",
+    "fee_charged": "200",
+    "fee_meta_xdr": "AAAAAgAAAAMAO8IaAAAAAAAAAAD0P5Z1P7N/jCCSUSVcxwjvsOigz71r3MDe5R0p8fY39AAAABdIdq/AADiaUAAAAEgAAAAoAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAADAAAAAAA7whoAAAAAam4cUQAAAAAAAAABADvCHAAAAAAAAAAA9D+WdT+zf4wgklElXMcI77DooM+9a9zA3uUdKfH2N/QAAAAXSHau+AA4mlAAAABIAAAAKAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAwAAAAAAO8IaAAAAAGpuHFEAAAAA",
+    "hash": "871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7",
+    "id": "871e49a6519d1aedc29fb75fe69d365124b31ad008bc426cc31d782ed76ab0c7",
+    "ledger": 3916316,
+    "max_fee": "200",
+    "memo_type": "none",
+    "operation_count": 2,
+    "paging_token": "16820449140813824",
+    "preconditions": {
+      "timebounds": {
+        "max_time": "1785601170",
+        "min_time": "0"
+      }
+    },
+    "result_xdr": "AAAAAAAAAMgAAAAAAAAAAgAAAAAAAAAKAAAAAAAAAAAAAAAKAAAAAAAAAAA=",
+    "signatures": [
+      "JVXl30Sk+oJscEqjFVkyY9uHaxGPKaxI3V2FpoentzBuve6j6UkZEMKrOO0xvXKyrWHQy27Z5pbXSFVHyMNsAQ=="
+    ],
+    "source_account": "GD2D7FTVH6ZX7DBASJISKXGHBDX3B2FAZ66WXXGA33SR2KPR6Y37JWJJ",
+    "source_account_sequence": "15932267083857993",
+    "successful": true
+  }
+}
