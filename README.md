@@ -18,7 +18,7 @@ Cada artefato é descrito por um registro mínimo W3C PROV-DM. A âncora registr
 - **Piloto v1: concluído** (20/07 a 01/08/2026). 208 operações de ancoragem confirmadas, 52 por mecanismo, em quatro janelas, sem falhas. Estado de referência: tag [`pilot-v1`](../../tree/pilot-v1).
   - Protocolo (publicado antes do código de medição): [`docs/protocolo-piloto.md`](docs/protocolo-piloto.md)
   - Resultados: [`docs/resultados-piloto.md`](docs/resultados-piloto.md)
-- **Piloto v2: em preparação.** Corrige os limites de medição e de desenho declarados no relatório do v1. O protocolo v2 será publicado antes de qualquer alteração no código de medição.
+- **Próximo passo:** o experimento completo, que corrige os limites de medição e de desenho declarados no relatório do piloto. Seu protocolo será publicado antes de qualquer alteração no código de medição.
 
 O piloto é exploratório: produz caracterização descritiva e parâmetros de planejamento, sem teste de hipóteses.
 
