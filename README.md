@@ -1,57 +1,118 @@
 # prov-anchor-bench
 
-Benchmark of cryptographic provenance-anchoring mechanisms for machine-learning artifacts.
+Avaliação experimental comparativa de mecanismos de ancoragem criptográfica de proveniência para artefatos de aprendizado de máquina (conjuntos de dados, transformações, configurações e modelos).
 
-This repository compares, under a single experimental harness, four ways of anchoring the provenance chain of ML pipeline artifacts (datasets, transformations, configurations, models):
+Um mesmo harness de medição compara quatro formas de ancorar a cadeia de proveniência dos artefatos de um pipeline:
 
-| Mechanism | Backend | Trust model |
+| Mecanismo | Instância | Modelo de confiança |
 |---|---|---|
-| Soroban smart contract | Stellar testnet | Public network consensus |
-| Stellar classic operation | Stellar testnet | Public network consensus |
-| Rekor (hashedrekord) | Sigstore public transparency log | Single auditable operator |
-| Local append-only log | Local filesystem (control) | None (baseline) |
+| Contrato inteligente Soroban | Stellar testnet | Consenso de rede pública |
+| Operação nativa Stellar (`manageData`) | Stellar testnet | Consenso de rede pública |
+| Rekor (`hashedrekord`) | Log de transparência público do Sigstore | Operador único auditável |
+| Log local append-only | Sistema de arquivos (controle) | Nenhum (linha de base) |
 
-Each artifact is described by a minimal W3C PROV-DM record; the anchor stores the SHA-256 of the artifact and of its provenance record, chained to the previous anchor, so that third parties can verify both the integrity of every link and the completeness of the chain.
+Cada artefato é descrito por um registro mínimo W3C PROV-DM. A âncora registra o SHA-256 do artefato e do seu registro de proveniência, encadeados ao registro anterior.
 
-## Status
+## Situação
 
-**Exploratory pilot.** The pilot protocol is pre-registered in [`docs/protocolo-piloto.md`](docs/protocolo-piloto.md) (in Portuguese) before any measurement code or data was committed — the commit history documents the order. Pilot results will be reported in `docs/resultados-piloto.md`.
+- **Piloto v1: concluído** (20/07 a 01/08/2026). 208 operações de ancoragem confirmadas, 52 por mecanismo, em quatro janelas, sem falhas. Estado de referência: tag [`pilot-v1`](../../tree/pilot-v1).
+  - Protocolo (publicado antes do código de medição): [`docs/protocolo-piloto.md`](docs/protocolo-piloto.md)
+  - Resultados: [`docs/resultados-piloto.md`](docs/resultados-piloto.md)
+- **Piloto v2: em preparação.** Corrige os limites de medição e de desenho declarados no relatório do v1. O protocolo v2 será publicado antes de qualquer alteração no código de medição.
 
-## Repository layout
+O piloto é exploratório: produz caracterização descritiva e parâmetros de planejamento, sem teste de hipóteses.
 
-```
-contracts/anchor/   Minimal Soroban anchoring contract (Rust, soroban-sdk — contracts are Rust by platform requirement)
-harness/            Measurement harness (Python 3.11+, stellar-sdk)
-analysis/           Descriptive analysis of pilot runs (Python)
-docs/               Pre-registered protocol and results
-```
+## Verificar os resultados publicados (sem credenciais)
 
-## Quickstart
+Requer Python 3.11 ou superior.
 
 ```bash
-# 1. Build and deploy the contract (requires Rust + stellar-cli, testnet account via friendbot)
-cd contracts/anchor && stellar contract build
-
-# 2. Install the harness dependencies (from the repository root)
 pip install -r harness/requirements.txt
+python -m tools.fetch_inmet                 # baixa o arquivo oficial do INMET e confere o SHA-256
+python -m tools.verify_published            # confere tudo contra a evidência arquivada em evidence/pilot-v1/
+python -m tools.verify_published --online   # o mesmo, direto nos serviços públicos (Horizon, Rekor, Soroban RPC)
+```
 
-# 3. Run a smoke test (3 operations per mechanism)
-python -m harness.run_pilot --smoke
+O verificador reconstrói os 20 artefatos a partir do arquivo oficial do INMET e confere, para cada operação publicada em `analysis/results/pilot-ops.csv`:
 
-# 4. Run a pilot window (balanced randomized order, CSV output)
-python -m harness.run_pilot --window 1
-python -m harness.baseline_probe --minutes 10   # in parallel, separate terminal
+1. o hash gravado em cada uma das 104 transações Stellar é igual ao hash do artefato reconstruído;
+2. a taxa cobrada e o horário de fechamento do ledger batem com o registro;
+3. as 52 transações Soroban invocam `anchor()` no contrato do piloto;
+4. cada uma das 52 entradas do Rekor existe, tem o `logIndex` registrado e uma prova de inclusão Merkle válida (RFC 6962) contra a raiz publicada;
+5. os logs locais do controle batem com o registro;
+6. o bytecode do contrato implantado é o arquivado;
+7. as medianas recalculadas são as publicadas no relatório.
 
-# 5. Verify the provenance chain and time the local primitive
-python -m harness.verify_chain
+A evidência pública (transações, entradas do Rekor e bytecode do contrato) está arquivada em [`evidence/pilot-v1/`](evidence/pilot-v1/), o que mantém a verificação possível mesmo depois de um reset da testnet.
+
+## Dados de entrada
+
+| Campo | Valor |
+|---|---|
+| Fonte | INMET, Banco de Dados Meteorológicos, dados históricos anuais: https://portal.inmet.gov.br/dadoshistoricos |
+| Arquivo | `2003.zip` → `INMET_CO_MT_A901_CUIABA_01-01-2003_A_31-12-2003.CSV` |
+| Estação | A901, Cuiabá (MT), estação automática |
+| SHA-256 | `0cecf2fdf3a9c26db24289d956b13522d9fc763b5a503d142df784069a58ee0b` |
+
+Somente dados públicos são usados. O arquivo bruto não é versionado; `tools/fetch_inmet.py` o baixa e confere.
+
+## Contrato do piloto v1
+
+| Campo | Valor |
+|---|---|
+| Endereço (testnet) | `CB6CW2PRULKUBZWJPONROCSV7L6TXQEIVR4N2SZURQX56XHYA5I6LCGM` |
+| SHA-256 do bytecode | `ba4ca84ac354cb74248ec32d4057d45ddf9cfab85961de36ce21df47346abea5` |
+| Código-fonte | [`contracts/anchor/src/lib.rs`](contracts/anchor/src/lib.rs) |
+| Explorador | https://stellar.expert/explorer/testnet/contract/CB6CW2PRULKUBZWJPONROCSV7L6TXQEIVR4N2SZURQX56XHYA5I6LCGM |
+
+## Reproduzir o experimento
+
+Pré-requisitos: Python 3.11+, Rust (com o target `wasm32v1-none`) e [`stellar-cli`](https://developers.stellar.org/docs/tools/cli). No Windows, o Rust exige as Build Tools do Visual Studio. Um ambiente em Docker será publicado com o piloto v2.
+
+```bash
+# 1. Dependências e dados
+pip install -r harness/requirements.txt
+python -m tools.fetch_inmet
+
+# 2. Contas descartáveis de teste (financiadas pelo friendbot) e implantação do contrato
+stellar keys generate pilot-soroban --network testnet --fund
+stellar keys generate pilot-classic --network testnet --fund
+cd contracts/anchor && stellar contract build && cd ../..
+stellar contract deploy --wasm contracts/anchor/target/wasm32v1-none/release/anchor.wasm \
+    --source-account pilot-soroban --network testnet      # imprime o endereço do contrato (C...)
+
+# 3. Arquivo de chaves local (nunca versionado), a partir de .pilot-secrets.example.json
+#    sorobanSecret = saída de: stellar keys secret pilot-soroban
+#    classicSecret = saída de: stellar keys secret pilot-classic
+#    contractId    = endereço impresso no passo 2
+cp harness/.pilot-secrets.example.json harness/.pilot-secrets.json
+
+# 4. Execução
+python -m harness.run_pilot --smoke            # 3 operações por mecanismo
+python -m harness.run_pilot --window 1         # uma janela: 13 operações por mecanismo, ordem aleatorizada
+python -m harness.baseline_probe --minutes 10  # em paralelo, em outro terminal
+python -m harness.registration_phase --without --reps 3
+python -m harness.registration_phase --with-mechanism control --reps 3
 python -m harness.local_primitive
+python -m harness.verify_chain
 
-# 6. Analyze
+# 5. Análise descritiva
 python analysis/pilot_analysis.py
 ```
 
-Only public data is anchored (hashes of artifacts derived from public INMET/BDMEP weather series). Testnet keys are disposable. Rekor entries are public and permanent by design; nothing identifying is ever uploaded — hashes only.
+As entradas do Rekor são públicas e permanentes por projeto; só hashes são enviados. As chaves de testnet são descartáveis.
 
-## License
+## Estrutura
 
-Apache-2.0. See [LICENSE](LICENSE).
+```
+contracts/anchor/    Contrato Soroban de ancoragem (Rust, soroban-sdk; contratos Soroban são escritos em Rust)
+harness/             Harness de medição (Python)
+analysis/            Análise descritiva e resultados brutos por operação (analysis/results/)
+tools/               Obtenção dos dados, arquivamento da evidência pública e verificação independente
+evidence/pilot-v1/   Evidência pública arquivada do piloto v1
+docs/                Protocolo e resultados
+```
+
+## Licença
+
+Apache-2.0. Ver [LICENSE](LICENSE). Os dados meteorológicos são públicos, disponibilizados pelo INMET.

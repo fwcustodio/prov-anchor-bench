@@ -1,6 +1,6 @@
 # Resultados do piloto exploratório
 
-Data do relatório: 01/08/2026. Protocolo pré-registrado em `protocolo-piloto.md`; dados brutos por operação em `analysis/results/`.
+Data do relatório: 01/08/2026; revisado em 28/09/2026 (desvios 6 e 7, definições de medição e limites de verificabilidade). Protocolo pré-registrado em `protocolo-piloto.md`; dados brutos por operação em `analysis/results/`. Os dados deste relatório podem ser conferidos contra a evidência pública com `python -m tools.verify_published` (ver README).
 
 ## Execução
 
@@ -43,7 +43,6 @@ Desvio-padrão por janela (ms): Soroban 345 / 1.569 / 307 / 253; clássico 262 /
 | Soroban | -0,21 | -0,20 | 0,00 | -0,10 |
 | Stellar clássico | +0,38 | -0,23 | +0,55 | -0,19 |
 | Rekor | -0,13 | +0,11 | +0,09 | -0,14 |
-| Controle | -0,30 | -0,12 | -0,06 | -0,11 |
 
 Com n = 13 por série (erro-padrão aproximado 0,28), nenhum padrão de correlação serial é consistente entre janelas — o sinal do clássico inverte de janela para janela. O piloto não estabelece estrutura serial; sustenta tratar a janela como bloco e verificar autocorrelação nos resíduos do modelo, com ação corretiva se detectada.
 
@@ -60,7 +59,7 @@ Sonda de 1 requisição/min executada em paralelo às janelas 1 e 2 (`baseline-p
 
 ### 7. Primitivo criptográfico local
 
-SHA-256: 0,0004 ms (82 bytes) a 0,089 ms (227 KB) por artefato; assinatura ed25519: ~0,104 ms (`local-primitive.csv`). Cerca de quatro ordens de grandeza abaixo da âncora em rede — referência determinística que separa o custo criptográfico do custo de rede.
+SHA-256: 0,0004 ms (82 bytes) a 0,089 ms (227 KB) por artefato; assinatura ECDSA P-256: ~0,104 ms (`local-primitive.csv`). Cerca de quatro ordens de grandeza abaixo da âncora em rede — referência determinística que separa o custo criptográfico do custo de rede.
 
 ### 8. Fase de registro com e sem ancoragem
 
@@ -68,7 +67,9 @@ Pipeline dos 20 artefatos (`registration-phase.csv`): sem âncora 29,7 ms (n=3);
 
 ## Verificação da cadeia
 
-Critério de aceite 3: **atendido**. Verificação automatizada dos 20 elos passando; a supressão do elo 5 é detectada pela quebra do encadeamento (`verify_chain`).
+Critério de aceite 3: **atendido**. O `verify_chain` reconstrói a cadeia de 20 elos em memória, verifica cada elo e detecta a supressão do elo 5 pela quebra do encadeamento. É um teste da construção da cadeia, não da cadeia ancorada: neste piloto nenhum mecanismo ancorou os 20 elos de uma mesma execução (ver Limites).
+
+A correspondência entre os dados publicados e a evidência pública é conferida por `tools/verify_published.py`: nas 104 transações Stellar, o hash gravado na rede é igual ao hash do artefato reconstruído a partir do arquivo oficial do INMET; as 52 entradas do Rekor têm prova de inclusão Merkle (RFC 6962) válida.
 
 ## Desvios do protocolo (seção 8)
 
@@ -77,7 +78,17 @@ Critério de aceite 3: **atendido**. Verificação automatizada dos 20 elos pass
 3. **Sonda de carga-base**: executada nas janelas 1 e 2; não executada nas janelas 3 e 4.
 4. **Footprint de recursos (métrica 5)**: coletada somente a taxa cobrada; o footprint detalhado de recursos Soroban não foi extraído neste piloto.
 5. Este relatório foi publicado em 01/08/2026, após a conclusão das 4 janelas; as janelas 1 e 2 haviam sido executadas em 20-22/07/2026.
+6. **Execução parcial da janela 1 em TypeScript**: a janela 1 foi iniciada em 20/07/2026, às 16:34 UTC, com a versão original do harness em TypeScript; após 22 operações bem-sucedidas, a execução foi interrompida, o harness foi portado para Python (commit `79c87f7`) e a janela 1 foi reexecutada integralmente às 16:44 UTC. Os registros da execução interrompida permanecem no repositório (`pilot-ops-ts-partial-w1.csv`, `control-log-w1-b753554efd90a957.jsonl`) e foram excluídos da análise.
+7. **Algoritmo de assinatura**: o protocolo previa ed25519. O Rekor rejeitou assinaturas ed25519 acompanhadas de digest SHA-256 em entradas `hashedrekord` (três rejeições registradas em `smoke-ops.csv`, commit `7aa3e9d`); o harness passou a usar ECDSA P-256 com SHA-256, a combinação canônica do `hashedrekord`, no Rekor e na medição do primitivo local.
 
 ## Limites
 
 Conforme a seção 1 do protocolo: este piloto não testa hipóteses e não sustenta comparação estatística entre mecanismos. Os números acima são caracterização descritiva e parâmetros de planejamento para o experimento fatorial completo.
+
+Limites de medição e de desenho, a corrigir no experimento seguinte:
+
+- **Definição de latência.** Soroban e Stellar clássico: do envio (`send_transaction`) até a primeira resposta `SUCCESS` de `get_transaction`, consultada a cada 250 ms; não inclui a leitura da conta e, no Soroban, não inclui a simulação da transação (`prepare_transaction`, tipicamente 0,2 a 0,9 s), o que subestima o custo total de uma âncora Soroban para quem a emite. Rekor: do `POST` até a resposta `201`. Controle: escrita, `fsync` e fechamento do arquivo.
+- **Verificabilidade do Rekor.** A entrada do Rekor registra o hash do registro de proveniência, que contém carimbo de tempo e nonce e não foi preservado; as entradas são verificáveis quanto à existência, à inclusão no log e ao horário, mas não quanto ao conteúdo. As operações Stellar registram o hash do artefato e são verificáveis quanto ao conteúdo.
+- **Cadeia intercalada.** Cada operação foi atribuída a um elo por `op_seq % 20`, com os mecanismos intercalados; o parâmetro `prev` enviado ao contrato é o hash do artefato anterior na cadeia local, e o contrato não confere `prev` nem exige autorização de quem grava.
+- **Estado do Stellar clássico.** O contador que nomeia as entradas `manageData` reinicia a cada execução, de modo que as janelas posteriores sobrescreveram as entradas das anteriores no estado da conta; o histórico de transações preserva todas as gravações.
+- **Modelo do pipeline.** O artefato `18-model` é um classificador por médias condicionais usado apenas para produzir um artefato serializado; acerta 35,2% no conjunto de teste (n = 71), abaixo da classe majoritária (66,2%). Nenhuma métrica do piloto depende da sua qualidade preditiva.
