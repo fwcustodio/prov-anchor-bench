@@ -28,7 +28,7 @@ Requer Python 3.11 ou superior.
 
 ```bash
 pip install -r harness/requirements.txt
-python -m tools.fetch_inmet                 # baixa o arquivo oficial do INMET e confere o SHA-256
+python -m tools.fetch_inmet                 # prepara o arquivo oficial do INMET e confere o SHA-256
 python -m tools.verify_published            # confere tudo contra a evidência arquivada em evidence/pilot-v1/
 python -m tools.verify_published --online   # o mesmo, direto nos serviços públicos (Horizon, Rekor, Soroban RPC)
 ```
@@ -54,7 +54,7 @@ A evidência pública (transações, entradas do Rekor e bytecode do contrato) e
 | Estação | A901, Cuiabá (MT), estação automática |
 | SHA-256 | `0cecf2fdf3a9c26db24289d956b13522d9fc763b5a503d142df784069a58ee0b` |
 
-Somente dados públicos são usados. O arquivo bruto não é versionado; `tools/fetch_inmet.py` o baixa e confere.
+Somente dados públicos são usados. Uma cópia do arquivo bruto está versionada em [`data/inmet/`](data/inmet/), para que a verificação não dependa da disponibilidade do portal; `tools/fetch_inmet.py` confere o SHA-256 dessa cópia e só recorre ao portal do INMET se ela estiver ausente. Os dados são do INMET, que os disponibiliza publicamente.
 
 ## Contrato do piloto v1
 
@@ -109,6 +109,7 @@ contracts/anchor/    Contrato Soroban de ancoragem (Rust, soroban-sdk; contratos
 harness/             Harness de medição (Python)
 analysis/            Análise descritiva e resultados brutos por operação (analysis/results/)
 tools/               Obtenção dos dados, arquivamento da evidência pública e verificação independente
+data/inmet/          Cópia versionada do arquivo bruto do INMET (dados públicos)
 evidence/pilot-v1/   Evidência pública arquivada do piloto v1
 docs/                Protocolo e resultados
 ```

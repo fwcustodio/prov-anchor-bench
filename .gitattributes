@@ -1,0 +1,2 @@
+# Raw input data must stay byte-identical (its SHA-256 is verified).
+data/inmet/*.CSV -text
